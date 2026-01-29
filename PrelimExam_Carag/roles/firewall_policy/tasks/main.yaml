@@ -1,0 +1,25 @@
+- name: Ensure UFW is installed
+  apt:
+    name: ufw
+    state: present
+    update_cache: yes
+
+- name: Set Default-Deny for Incoming
+  ufw:
+    policy: deny
+    direction: incoming
+
+- name: Set Default-Allow for Outgoing
+  ufw:
+    policy: allow
+    direction: outgoing
+
+- name: Allow SSH with Rate Limiting
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: Enable UFW
+  ufw:
+    state: enabled

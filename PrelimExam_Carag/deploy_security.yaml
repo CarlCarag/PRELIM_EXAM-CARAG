@@ -1,0 +1,12 @@
+---
+- hosts: dbservers
+  become: yes
+  roles:
+    - firewall_policy
+    - fail2ban_setup
+
+  handlers:
+    - name: restart fail2ban
+      service:
+        name: fail2ban
+        state: restarted

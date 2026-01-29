@@ -1,0 +1,38 @@
+---
+- name: Update apt cache and upgrade all packages
+  apt:
+    upgrade: dist
+    update_cache: yes
+
+- name: Ensure 'ufw' is installed and enabled
+  apt:
+    name: ufw
+    state: present
+
+- name: Allow SSH and enable Firewall
+  ufw:
+    rule: allow
+    name: OpenSSH
+    state: enabled
+
+- name: Disable root login via SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+    state: present
+  notify: Restart SSH
+
+- name: Remove insecure packages (Telnet/RSH)
+  apt:
+    name: ['telnet', 'rsh-client', 'rsh-server']
+    state: absent
+
+- name: Set password aging limits
+  lineinfile:
+    path: /etc/login.defs
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
+  with_items:
+    - { regexp: '^PASS_MAX_DAYS', line: 'PASS_MAX_DAYS 90' }
+    - { regexp: '^PASS_MIN_DAYS', line: 'PASS_MIN_DAYS 7' }

@@ -1,0 +1,6 @@
+---
+- name: Enforce Security Hardening on Ubuntu
+  hosts: dbservers
+  become: yes
+  roles:
+    - ubuntu_hardening
